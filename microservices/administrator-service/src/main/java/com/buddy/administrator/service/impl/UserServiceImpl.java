@@ -11,6 +11,9 @@ import com.buddy.administrator.exception.UserAlreadyPresentException;
 import com.buddy.administrator.repository.UserRepository;
 import com.buddy.administrator.service.BloomFilterService;
 import com.buddy.administrator.service.UserService;
+import com.buddy.auth.client.enums.Status;
+import com.buddy.auth.client.request.UserCreateRequestDto;
+import com.buddy.client.auth.AuthClient;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final BloomFilterService bloom;
+	
+	private final AuthClient authClient;
 	
 	private final ModelMapper modelMapper;
 
@@ -31,9 +36,21 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		User user = modelMapper.map(userCreateDto, User.class);
-		
 		System.out.println("User: "+user);
-		return null;
+
+		userRepository.save(user);
+		
+		bloom.addUsername(user.getUsername());
+		
+		UserCreateRequestDto createRequestDto = UserCreateRequestDto.builder()
+				.userId(user.getId())
+				.username(user.getUsername())
+				.password(userCreateDto.getPassword().toString())
+				.status(Status.ACTIVE)
+				.build();
+		authClient.signupUser(createRequestDto);
+		
+		return new ResponseEntity<>(user, HttpStatus.CREATED);
 	}
 	
 	
