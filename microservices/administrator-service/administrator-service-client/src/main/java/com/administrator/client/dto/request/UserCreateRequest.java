@@ -14,6 +14,7 @@ public class UserCreateRequest {
 	private Gender gender;
 	private long phone;
 	private String username;
+	private String password;
 	private String bio;
 	private String profileUrl;
 }

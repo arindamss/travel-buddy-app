@@ -10,4 +10,5 @@ import com.buddy.administrator.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID>{
 	
+	public boolean existsByUsername(String username);
 }
