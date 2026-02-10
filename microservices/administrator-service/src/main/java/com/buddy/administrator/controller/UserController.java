@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.administrator.client.api.UserApis;
 import com.administrator.client.dto.request.UserCreateRequest;
+import com.administrator.client.dto.response.UserCreatedResponse;
 import com.buddy.administrator.service.UserService;
 
 @RestController
@@ -16,7 +17,7 @@ public class UserController implements UserApis {
 	}
 
 	@Override
-	public ResponseEntity<?> createUser(UserCreateRequest userCreateDto) {
+	public ResponseEntity<UserCreatedResponse> createUser(UserCreateRequest userCreateDto) {
 		return userService.createUser(userCreateDto);
 	}
 	

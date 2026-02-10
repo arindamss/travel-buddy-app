@@ -18,6 +18,11 @@ public class GlobalExceptionHandler {
 		return buildErrorResponse(ex);
 	}
 	
+	@ExceptionHandler(InternalServerError.class)
+	public ResponseEntity<ErrorResponse> handleInternalServerError(InternalServerError ex){
+		return buildErrorResponse(ex);
+	}
+	
 	private <T extends RuntimeException & HttpStatusProvider> ResponseEntity<ErrorResponse> buildErrorResponse(T ex){
 		log.error(ex.getMessage() + " -- Status --"+ex.getHttpStatus().value());
 		ErrorResponse errorResponse = ErrorResponse.builder()

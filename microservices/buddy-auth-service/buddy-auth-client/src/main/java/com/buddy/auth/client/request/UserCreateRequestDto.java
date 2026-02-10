@@ -2,6 +2,7 @@ package com.buddy.auth.client.request;
 
 import java.util.UUID;
 
+import com.buddy.auth.client.enums.CredentialType;
 import com.buddy.auth.client.enums.Status;
 
 import jakarta.validation.constraints.NotNull;
@@ -26,4 +27,6 @@ public class UserCreateRequestDto {
 	private CharSequence password;
 	
 	private Status status;
+	
+	private CredentialType credentialType;
 }

@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.buddy.auth.client.api.internal.UserInternalApi;
 import com.buddy.auth.client.request.UserCreateRequestDto;
-import com.buddy.auth.service.UserService;
+import com.buddy.auth.client.response.UserCreatedResponseDto;
+import com.buddy.auth.service.AuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +15,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController implements UserInternalApi{
 
-	private final UserService userService;
+	private final AuthService authService;
 	
 	@Override
-	public ResponseEntity<?> signupUser(@Valid UserCreateRequestDto userCreateRequestDto) {
+	public ResponseEntity<UserCreatedResponseDto> registerUser(@Valid UserCreateRequestDto userCreateRequestDto) {
 		// TODO Auto-generated method stub
-		userService.signupUser(userCreateRequestDto);
-		return null;
+		return authService.registerUser(userCreateRequestDto);
 	}
 
 }

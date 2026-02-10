@@ -6,12 +6,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.administrator.client.dto.request.UserCreateRequest;
+import com.administrator.client.dto.response.UserCreatedResponse;
 import com.buddy.administrator.entity.User;
+import com.buddy.administrator.enums.Status;
+import com.buddy.administrator.exception.InternalServerError;
 import com.buddy.administrator.exception.UserAlreadyPresentException;
 import com.buddy.administrator.repository.UserRepository;
 import com.buddy.administrator.service.BloomFilterService;
 import com.buddy.administrator.service.UserService;
-import com.buddy.auth.client.enums.Status;
+import com.buddy.auth.client.enums.CredentialType;
+//import com.buddy.auth.client.enums.Status;
 import com.buddy.auth.client.request.UserCreateRequestDto;
 import com.buddy.client.auth.AuthClient;
 
@@ -28,7 +32,7 @@ public class UserServiceImpl implements UserService {
 	private final ModelMapper modelMapper;
 
 	@Override
-	public ResponseEntity<?> createUser(UserCreateRequest userCreateDto) {
+	public ResponseEntity<UserCreatedResponse> createUser(UserCreateRequest userCreateDto) {
 		if(bloom.mightContainUsername(userCreateDto.getUsername())) {
 			if(userRepository.existsByUsername(userCreateDto.getUsername())) {
 				throw new UserAlreadyPresentException("Username is already present. try to create user with different username.", HttpStatus.CONFLICT);
@@ -36,8 +40,9 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		User user = modelMapper.map(userCreateDto, User.class);
+		user.setStatus(Status.PENDING);
 		System.out.println("User: "+user);
-
+		
 		userRepository.save(user);
 		
 		bloom.addUsername(user.getUsername());
@@ -46,11 +51,24 @@ public class UserServiceImpl implements UserService {
 				.userId(user.getId())
 				.username(user.getUsername())
 				.password(userCreateDto.getPassword().toString())
-				.status(Status.ACTIVE)
+				.status(com.buddy.auth.client.enums.Status.ACTIVE)
+				.credentialType(CredentialType.PASSWORD)
 				.build();
-		authClient.signupUser(createRequestDto);
+		try {
+			authClient.registerUser(createRequestDto);			
+		}
+		catch(Exception e) {
+			userRepository.deleteById(user.getId());
+			e.printStackTrace();
+			throw new InternalServerError("Failed to save user credential.", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
-		return new ResponseEntity<>(user, HttpStatus.CREATED);
+		user.setStatus(Status.ACTIVE);
+		userRepository.save(user);
+		
+		UserCreatedResponse response = modelMapper.map(user, UserCreatedResponse.class);
+		
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 	
 	
