@@ -1,6 +1,6 @@
-package com.administrator.client.dto.response;
+package com.buddy.auth.client.response;
 
-import com.administrator.client.enums.Status;
+import com.buddy.auth.client.enums.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserCreatedResponse {
+public class UserCreatedResponseDto {
 	private String username;
 	private Status status;
+	private String credentialType;
 }

@@ -24,3 +24,23 @@ hs_err_pid*
 replay_pid*
 
 .settings
+
+# Eclipse
+.metadata/
+.project
+.classpath
+.settings/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bkp
+
+# Build folders (if Maven/Gradle)
+target/
+build/

@@ -24,7 +24,6 @@ public class BloomFilterServiceImpl implements BloomFilterService{
 	public void addUsername(String username) {
 		redissonClient.getBloomFilter("bf:usernames")
 						.add(username);
-		
 	}
 
 }
