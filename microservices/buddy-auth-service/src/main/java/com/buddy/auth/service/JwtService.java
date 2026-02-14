@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.stereotype.Service;
 
 import com.buddy.auth.configuration.RsaKeyProperties;
+import com.buddy.auth.configuration.UserDetailsImpl;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -64,16 +65,19 @@ public class JwtService {
         Instant now = Instant.now();
         Instant expiry = now.plus(accessTtlMinutes, ChronoUnit.MINUTES);
 
-        List<String> roles = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+//        List<String> roles = authentication.getAuthorities().stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.toList());
+        UserDetailsImpl principle = (UserDetailsImpl) authentication.getPrincipal();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("http://localhost:8083")
                 .issuedAt(now)
                 .expiresAt(expiry)
-                .subject(authentication.getName())
-                .claim("roles", roles)
+                .subject(principle.getUserId().toString())
+                .claim("status", principle.getStatus().name())
+                .claim("username", authentication.getName())
+                .claim("typ", "access")
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
@@ -82,12 +86,14 @@ public class JwtService {
     public String generateRefreshToken(Authentication authentication) {
         Instant now = Instant.now();
         Instant expiry = now.plus(refreshTtlMinutes, ChronoUnit.MINUTES);
+        
+        UserDetailsImpl principle = (UserDetailsImpl) authentication.getPrincipal();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("http://localhost:8083")
                 .issuedAt(now)
                 .expiresAt(expiry)
-                .subject(authentication.getName())
+                .subject(principle.getUserId().toString())
                 .claim("typ", "refresh")
                 .build();
 
@@ -101,13 +107,18 @@ public class JwtService {
     public Authentication validateTokenAndGetAuthentication(String token) {
         Jwt jwt = jwtDecoder.decode(token); // will throw JwtException for invalid/expired tokens
         String username = jwt.getSubject();
-        List<String> roles = jwt.getClaimAsStringList("roles");
-        List<SimpleGrantedAuthority> authorities = (roles == null)
-                ? List.of()
-                : roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        String status = jwt.getClaimAsString("status");
+//        List<String> roles = jwt.getClaimAsStringList("roles");
+//        List<SimpleGrantedAuthority> authorities = (roles == null)
+//                ? List.of()
+//                : roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
         // Create an Authentication (principal=password null) - sufficient for downstream checks
-        return new UsernamePasswordAuthenticationToken(username, null, authorities);
+        return new UsernamePasswordAuthenticationToken(username, null, List.of());
+    }
+    
+    public Jwt decode(String token) {
+    	return jwtDecoder.decode(token);
     }
 
     public boolean isTokenValid(String token) {

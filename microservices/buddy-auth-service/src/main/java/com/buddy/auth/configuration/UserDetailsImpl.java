@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.buddy.auth.entity.User;
+import com.buddy.auth.enums.Status;
 
 import lombok.Getter;
 
@@ -24,14 +25,13 @@ public class UserDetailsImpl implements UserDetails {
     private final UUID userId;
     private final String username;
     private final String password; // Stored hashed password
-//    private final Collection<? extends GrantedAuthority> authorities;
+    private final Status status;
 
     public UserDetailsImpl(User user, String hashedPassword) {
         this.userId = user.getUserId();
         this.username = user.getUsername();
         this.password = hashedPassword;
-        // Map UserType to Spring Security roles. Prefix with "ROLE_"
-//        this.authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getUserType().name()));
+        this.status = user.getStatus();
     }
 
     @Override

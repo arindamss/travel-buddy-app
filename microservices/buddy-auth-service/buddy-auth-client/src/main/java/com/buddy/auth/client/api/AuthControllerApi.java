@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.buddy.auth.client.request.LoginRequest;
+import com.buddy.auth.client.request.RefreshTokenRequest;
 import com.buddy.auth.client.response.AuthResponse;
 
 import jakarta.validation.Valid;
@@ -15,4 +16,7 @@ public interface AuthControllerApi {
 	
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginRequest);
+	
+	@PostMapping("/refresh-token")
+	public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest);
 }

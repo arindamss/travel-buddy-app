@@ -1,6 +1,7 @@
 package com.buddy.administrator.entity;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,6 +9,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.buddy.administrator.enums.Gender;
 import com.buddy.administrator.enums.Status;
+import com.buddy.administrator.enums.Style;
+import com.buddy.administrator.enums.Tag;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -63,6 +66,14 @@ public class User {
 	
 	@Column(name = "profile_url")
 	private String profileUrl;
+	
+	private String location;
+
+	@Enumerated(EnumType.STRING)
+	private Tag tag;
+	
+	@Enumerated(EnumType.STRING)
+	private Style style;
 	
 	@Column(name = "status", nullable = false)
 	private Status status;

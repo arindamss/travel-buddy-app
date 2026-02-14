@@ -1,6 +1,7 @@
 package com.buddy.auth.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,9 +12,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import com.buddy.auth.client.request.LoginRequest;
+import com.buddy.auth.client.request.RefreshTokenRequest;
 import com.buddy.auth.client.request.UserCreateRequestDto;
 import com.buddy.auth.client.response.AuthResponse;
 import com.buddy.auth.client.response.UserCreatedResponseDto;
@@ -88,13 +91,13 @@ public class AuthServiceImpl implements AuthService{
 
             
             // Get user info
-            List<User> users = userRepository.findByUsername(request.getUsername());
+            Optional<User> users = userRepository.findByUsername(request.getUsername());
 
             if (users.isEmpty()) {
                 throw new UserNotFoundException("User not found: " + request.getUsername());
             }
 
-            User user = users.get(0);
+            User user = users.get();
 
             return AuthResponse.builder()
                     .userId(user.getUserId())
@@ -108,6 +111,36 @@ public class AuthServiceImpl implements AuthService{
         } catch (Exception e) {
             throw new InvalidCredentialsException("Invalid user login or password.");
         }
+	}
+
+	@Override
+	public AuthResponse refreshToken(String refreshToken) {
+		Jwt jwt = jwtService.decode(refreshToken);
+		
+		if(!"refresh".equals(jwt.getClaimAsString("typ"))) {
+			throw new InvalidCredentialsException("Invalid refresh token.");
+		}
+		
+		String username = jwt.getSubject();
+		
+		User user = userRepository.findByUsername(username)
+				.stream()
+				.findFirst()
+				.orElseThrow(() -> new UserNotFoundException("User not found."));
+		
+		Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, List.of());
+		
+		String newAccessToken = jwtService.generateAccessToken(authentication);
+		
+		
+		return AuthResponse.builder()
+					.userId(user.getUserId())
+					.username(username)
+					.accessToken(newAccessToken)
+					.refreshToken(refreshToken)
+					.tokenType("Bearer")
+		            .expiresIn(jwtService.getAccessTokenExpirySeconds())
+				.build();
 	}
 
 }

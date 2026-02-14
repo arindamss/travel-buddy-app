@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.buddy.auth.client.api.AuthControllerApi;
 import com.buddy.auth.client.request.LoginRequest;
+import com.buddy.auth.client.request.RefreshTokenRequest;
 import com.buddy.auth.client.response.AuthResponse;
 import com.buddy.auth.service.AuthService;
 
@@ -20,6 +21,11 @@ public class AuthController implements AuthControllerApi{
 	@Override
 	public ResponseEntity<AuthResponse> login(@Valid LoginRequest request) {
 		return ResponseEntity.ok(authService.loginUser(request));
+	}
+
+	@Override
+	public ResponseEntity<AuthResponse> refreshToken(RefreshTokenRequest refreshTokenRequest) {
+		return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest.getToken()));
 	}
 	
 }

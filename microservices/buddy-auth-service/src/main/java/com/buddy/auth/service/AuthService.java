@@ -3,6 +3,7 @@ package com.buddy.auth.service;
 import org.springframework.http.ResponseEntity;
 
 import com.buddy.auth.client.request.LoginRequest;
+import com.buddy.auth.client.request.RefreshTokenRequest;
 import com.buddy.auth.client.request.UserCreateRequestDto;
 import com.buddy.auth.client.response.AuthResponse;
 import com.buddy.auth.client.response.UserCreatedResponseDto;
@@ -13,4 +14,6 @@ public interface AuthService {
 	public ResponseEntity<UserCreatedResponseDto> registerUser(UserCreateRequestDto userCreateRequestDto);
 
 	public AuthResponse loginUser(@Valid LoginRequest request);
+	
+	public AuthResponse refreshToken(String refreshToken);
 }
