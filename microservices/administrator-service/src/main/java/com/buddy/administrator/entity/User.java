@@ -1,7 +1,7 @@
 package com.buddy.administrator.entity;
 
 import java.time.Instant;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,15 +48,15 @@ public class User {
 	@Column(name = "full_name", nullable = false, length = 100)
 	private String name;
 	
-	@Column
-	private float age;
+	@Column(name = "date_of_birth", nullable = false)
+    private LocalDate dateOfBirth;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(length = 10)
 	private Gender gender;
 	
-	@Column(nullable = false)
-	private long phone;
+	@Column(nullable = false, length = 20)
+	private String phone;
 	
 	@Column(nullable = false, length = 100)
 	private String username;

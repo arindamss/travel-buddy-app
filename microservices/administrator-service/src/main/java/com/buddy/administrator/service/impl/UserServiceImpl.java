@@ -1,16 +1,25 @@
 package com.buddy.administrator.service.impl;
 
+import java.util.UUID;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.administrator.client.dto.request.UserCreateRequest;
+import com.administrator.client.dto.request.UserInterestRequest;
 import com.administrator.client.dto.response.UserCreatedResponse;
+import com.administrator.client.dto.response.UserUpdatedResponse;
+import com.buddy.administrator.entity.Interest;
 import com.buddy.administrator.entity.User;
+import com.buddy.administrator.entity.UserInterest;
 import com.buddy.administrator.enums.Status;
 import com.buddy.administrator.exception.InternalServerError;
 import com.buddy.administrator.exception.UserAlreadyPresentException;
+import com.buddy.administrator.exception.UserNotFoundException;
+import com.buddy.administrator.repository.InterestRepository;
+import com.buddy.administrator.repository.UserInterestRepository;
 import com.buddy.administrator.repository.UserRepository;
 import com.buddy.administrator.service.BloomFilterService;
 import com.buddy.administrator.service.UserService;
@@ -69,9 +78,6 @@ public class UserServiceImpl implements UserService {
 		UserCreatedResponse response = modelMapper.map(user, UserCreatedResponse.class);
 		
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
-	}
-	
-	
-	
+	}	
 	
 }

@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.administrator.client.api.UserApis;
 import com.administrator.client.dto.request.UserCreateRequest;
+import com.administrator.client.dto.request.UserInterestRequest;
 import com.administrator.client.dto.response.UserCreatedResponse;
+import com.administrator.client.dto.response.UserUpdatedResponse;
 import com.buddy.administrator.service.UserService;
 
 @RestController

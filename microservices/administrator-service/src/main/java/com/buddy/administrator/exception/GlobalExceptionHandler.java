@@ -14,12 +14,17 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UserAlreadyPresentException.class)
-	public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserAlreadyPresentException ex){
+	public ResponseEntity<ErrorResponse> handleUserAlreadyPresentException(UserAlreadyPresentException ex){
 		return buildErrorResponse(ex);
 	}
 	
 	@ExceptionHandler(InternalServerError.class)
 	public ResponseEntity<ErrorResponse> handleInternalServerError(InternalServerError ex){
+		return buildErrorResponse(ex);
+	}
+	
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex){
 		return buildErrorResponse(ex);
 	}
 	

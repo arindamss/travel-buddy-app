@@ -1,7 +1,7 @@
 package com.buddy.auth.service.impl;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,10 +16,10 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import com.buddy.auth.client.request.LoginRequest;
-import com.buddy.auth.client.request.RefreshTokenRequest;
 import com.buddy.auth.client.request.UserCreateRequestDto;
 import com.buddy.auth.client.response.AuthResponse;
 import com.buddy.auth.client.response.UserCreatedResponseDto;
+import com.buddy.auth.configuration.UserDetailsImpl;
 import com.buddy.auth.entity.User;
 import com.buddy.auth.entity.UserCredential;
 import com.buddy.auth.enums.CredentialType;
@@ -121,21 +121,31 @@ public class AuthServiceImpl implements AuthService{
 			throw new InvalidCredentialsException("Invalid refresh token.");
 		}
 		
-		String username = jwt.getSubject();
+		UUID userId = UUID.fromString(jwt.getSubject());
 		
-		User user = userRepository.findByUsername(username)
+//		System.out.println("Username: "+username);
+		
+		User user = userRepository.findById(userId)
 				.stream()
 				.findFirst()
 				.orElseThrow(() -> new UserNotFoundException("User not found."));
 		
-		Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, List.of());
+		UserDetailsImpl userDetails = new UserDetailsImpl(user);
+
+		Authentication authentication =
+		        new UsernamePasswordAuthenticationToken(
+		                userDetails,
+		                null,
+		                userDetails.getAuthorities()
+		        );
+
 		
 		String newAccessToken = jwtService.generateAccessToken(authentication);
 		
 		
 		return AuthResponse.builder()
 					.userId(user.getUserId())
-					.username(username)
+					.username(user.getUsername())
 					.accessToken(newAccessToken)
 					.refreshToken(refreshToken)
 					.tokenType("Bearer")

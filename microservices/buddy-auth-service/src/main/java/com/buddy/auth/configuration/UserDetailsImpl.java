@@ -26,6 +26,13 @@ public class UserDetailsImpl implements UserDetails {
     private final String username;
     private final String password; // Stored hashed password
     private final Status status;
+    
+    public UserDetailsImpl(User user) {
+        this.userId = user.getUserId();
+        this.username = user.getUsername();
+        this.password = null; // not needed for refresh token
+        this.status = user.getStatus();
+    }
 
     public UserDetailsImpl(User user, String hashedPassword) {
         this.userId = user.getUserId();
