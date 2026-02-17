@@ -45,11 +45,11 @@
 	<modules>
 		<module>lib/buddy-client</module>
 		<!--Client's-->
-		<module>microservices/administrator-service/administrator-service-client</module>
+		<module>microservices/buddy-profile-service/buddy-profile-client</module>
 		<module>microservices/buddy-auth-service/buddy-auth-client</module>
 		<!--Services-->
-		<module>microservices/discovery-service</module>
-		<module>microservices/administrator-service</module>
+		<module>microservices/buddy-discovery-service</module>
+		<module>microservices/buddy-profile-service</module>
 		<module>microservices/buddy-auth-service</module>
    
 	</modules>
