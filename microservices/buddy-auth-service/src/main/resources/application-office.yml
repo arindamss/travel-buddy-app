@@ -19,6 +19,16 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  security:
+    user:
+      name: user
+      password: password
+    oauth2:
+      authorizationserver:
+        issuer: http://localhost:8083/api/buddy
+      resourceserver:
+        jwt:
+          issuer-uri: ${spring.security.oauth2.authorizationserver.issuer}
 server:
   address: 0.0.0.0
   port: 8083

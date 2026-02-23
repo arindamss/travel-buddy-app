@@ -3,6 +3,7 @@ package com.buddy.auth.service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,8 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.stereotype.Service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
 import com.buddy.auth.configuration.RsaKeyProperties;
 import com.buddy.auth.configuration.UserDetailsImpl;
 import com.nimbusds.jose.jwk.JWK;
@@ -49,6 +52,9 @@ public class JwtService {
 
     @Value("${treecare.tokens.refresh-ttl-minutes:60}")
     private long refreshTtlMinutes;
+    
+    @Value("${spring.security.oauth2.authorizationserver.issuer}")
+	private String issuer;
 
     @PostConstruct
     public void init() {
@@ -106,7 +112,11 @@ public class JwtService {
      */
     public Authentication validateTokenAndGetAuthentication(String token) {
         Jwt jwt = jwtDecoder.decode(token); // will throw JwtException for invalid/expired tokens
-        String username = jwt.getSubject();
+        String type = jwt.getClaimAsString("typ");
+        if(!"access".equals(type)) {
+        	throw new JwtException("Invalid token type");
+        }
+        String userId = jwt.getSubject();
         String status = jwt.getClaimAsString("status");
 //        List<String> roles = jwt.getClaimAsStringList("roles");
 //        List<SimpleGrantedAuthority> authorities = (roles == null)
@@ -114,7 +124,7 @@ public class JwtService {
 //                : roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
         // Create an Authentication (principal=password null) - sufficient for downstream checks
-        return new UsernamePasswordAuthenticationToken(username, null, List.of());
+        return new UsernamePasswordAuthenticationToken(userId, null, List.of());
     }
     
     public Jwt decode(String token) {
