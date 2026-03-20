@@ -50,6 +50,7 @@ public class UserServiceImpl implements UserService {
 		
 		User user = modelMapper.map(userCreateDto, User.class);
 		user.setStatus(Status.PENDING);
+//		user.setDateOfBirth(userCreateDto.getDateOfBirth());
 		System.out.println("User: "+user);
 		
 		userRepository.save(user);

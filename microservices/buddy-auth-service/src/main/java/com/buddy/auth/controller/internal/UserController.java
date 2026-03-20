@@ -20,7 +20,7 @@ public class UserController implements UserInternalApi{
 	@Override
 	public ResponseEntity<UserCreatedResponseDto> registerUser(@Valid UserCreateRequestDto userCreateRequestDto) {
 		// TODO Auto-generated method stub
-		return authService.registerUser(userCreateRequestDto);
+		return ResponseEntity.ok(authService.registerUser(userCreateRequestDto));
 	}
 
 }

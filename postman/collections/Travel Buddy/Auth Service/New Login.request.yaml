@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://localhost:8083/oauth2/token
+method: POST
+body:
+  type: urlencoded
+  content:
+    grant_type: password
+    username: arindam.dev
+    password: Arindam2*
+auth:
+  type: basic
+  credentials:
+    username: mobile-client
+    password: secret
+order: 3000

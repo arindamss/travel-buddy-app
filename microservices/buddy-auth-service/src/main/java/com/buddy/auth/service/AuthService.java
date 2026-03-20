@@ -11,7 +11,7 @@ import com.buddy.auth.client.response.UserCreatedResponseDto;
 import jakarta.validation.Valid;
 
 public interface AuthService {
-	public ResponseEntity<UserCreatedResponseDto> registerUser(UserCreateRequestDto userCreateRequestDto);
+	public UserCreatedResponseDto registerUser(UserCreateRequestDto userCreateRequestDto);
 
 	public AuthResponse loginUser(@Valid LoginRequest request);
 	

@@ -1,6 +1,7 @@
 package com.buddy.profile.client.dto.request;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.buddy.profile.client.enums.Gender;
@@ -14,7 +15,7 @@ import lombok.Data;
 @Builder
 public class UserCreateRequest {
 	private String name;
-	private float age;
+	private LocalDate dateOfBirth;
 	private Gender gender;
 	private long phone;
 	private String username;

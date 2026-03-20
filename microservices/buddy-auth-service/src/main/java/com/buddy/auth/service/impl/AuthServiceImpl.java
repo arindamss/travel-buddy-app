@@ -1,34 +1,20 @@
 package com.buddy.auth.service.impl;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import org.modelmapper.ModelMapper;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import com.buddy.auth.client.request.LoginRequest;
 import com.buddy.auth.client.request.UserCreateRequestDto;
 import com.buddy.auth.client.response.AuthResponse;
 import com.buddy.auth.client.response.UserCreatedResponseDto;
-import com.buddy.auth.configuration.UserDetailsImpl;
 import com.buddy.auth.entity.User;
 import com.buddy.auth.entity.UserCredential;
 import com.buddy.auth.enums.CredentialType;
-import com.buddy.auth.exception.InvalidCredentialsException;
-import com.buddy.auth.exception.UserNotFoundException;
 import com.buddy.auth.repository.UserCredentialRepository;
 import com.buddy.auth.repository.UserRepository;
 import com.buddy.auth.service.AuthService;
-import com.buddy.auth.service.JwtService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +27,11 @@ public class AuthServiceImpl implements AuthService{
 	private final UserCredentialRepository credentialRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final AuthenticationManager authenticationManager;
-	private final JwtService jwtService;
+//	private final JwtService jwtService;
 //	private final PasswordResetTokenService passwordResetTokenService;
 	private final ModelMapper mapper;
 
+	/*
 	@Override
 	public ResponseEntity<UserCreatedResponseDto> registerUser(UserCreateRequestDto requestDto) {
 		try {
@@ -74,83 +61,44 @@ public class AuthServiceImpl implements AuthService{
 					.credentialType(requestDto.getCredentialType().name())
 				.build();
 		return new ResponseEntity(responseDto, HttpStatus.CREATED);
-	}
+	} */
+	
+	public UserCreatedResponseDto registerUser(UserCreateRequestDto requestDto) {
+
+        if (userRepository.findByUsername(requestDto.getUsername()).isPresent()) {
+            throw new RuntimeException("User already exists");
+        }
+
+        User user = mapper.map(requestDto, User.class);
+
+        userRepository.save(user);
+
+        UserCredential credential = UserCredential.builder()
+                .user(user)
+                .secret(passwordEncoder.encode(requestDto.getPassword()))
+                .credentialType(CredentialType.valueOf(requestDto.getCredentialType().name()))
+                .build();
+
+        credentialRepository.save(credential);
+
+        return UserCreatedResponseDto.builder()
+				.username(requestDto.getUsername())
+				.status(requestDto.getStatus())
+				.credentialType(requestDto.getCredentialType().name())
+			.build();
+    }
 
 	@Override
 	public AuthResponse loginUser(@Valid LoginRequest request) {
-		try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            // Generate both tokens
-            String accessToken = jwtService.generateAccessToken(authentication);
-            String refreshToken = jwtService.generateRefreshToken(authentication);
-
-            
-            // Get user info
-            Optional<User> users = userRepository.findByUsername(request.getUsername());
-
-            if (users.isEmpty()) {
-                throw new UserNotFoundException("User not found: " + request.getUsername());
-            }
-
-            User user = users.get();
-
-            return AuthResponse.builder()
-                    .userId(user.getUserId())
-                    .username(user.getUsername())
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .tokenType("Bearer")
-                    .expiresIn(jwtService.getAccessTokenExpirySeconds())
-                    .build();
-
-        } catch (Exception e) {
-            throw new InvalidCredentialsException("Invalid user login or password.");
-        }
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public AuthResponse refreshToken(String refreshToken) {
-		Jwt jwt = jwtService.decode(refreshToken);
-		
-		if(!"refresh".equals(jwt.getClaimAsString("typ"))) {
-			throw new InvalidCredentialsException("Invalid refresh token.");
-		}
-		
-		UUID userId = UUID.fromString(jwt.getSubject());
-		
-//		System.out.println("Username: "+username);
-		
-		User user = userRepository.findById(userId)
-				.stream()
-				.findFirst()
-				.orElseThrow(() -> new UserNotFoundException("User not found."));
-		
-		UserDetailsImpl userDetails = new UserDetailsImpl(user);
-
-		Authentication authentication =
-		        new UsernamePasswordAuthenticationToken(
-		                userDetails,
-		                null,
-		                userDetails.getAuthorities()
-		        );
-
-		
-		String newAccessToken = jwtService.generateAccessToken(authentication);
-		
-		
-		return AuthResponse.builder()
-					.userId(user.getUserId())
-					.username(user.getUsername())
-					.accessToken(newAccessToken)
-					.refreshToken(refreshToken)
-					.tokenType("Bearer")
-		            .expiresIn(jwtService.getAccessTokenExpirySeconds())
-				.build();
+		// TODO Auto-generated method stub
+		return null;
 	}
+	
 
 }

@@ -1,0 +1,19 @@
+$kind: http-request
+url: localhost:8083/auth/refresh-token
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"token\":
+    \"eyJraWQiOiI1Yjg2NmZlZi1jYzJiLTRmYWEtOGQ1MS03Nzc4OTdkN2FlMjYiLCJhbGciOiJSU\
+    zI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODMiLCJzdWIiOiI5N2JjNzAzOC1mZjE\
+    zLTRmMDEtYWJkNC0yODY5MjdhYWMyZGMiLCJ0eXAiOiJyZWZyZXNoIiwiZXhwIjoxNzcxMTgxND\
+    I1LCJpYXQiOjE3NzExNzc4MjV9.lsn0c9cwOsKM5Bu0xjzbdYKPqXQkvWv0z4pf38fnS145QbN-\
+    pKPLKCG32HAcW_NBZbiuUEDLkaKL5DBNzlK9fL7fW_vxzKHxgYLPvDbLff5B6CQZjHKvnaugx49\
+    sKi_BmcNaDaV-OsS21GVtp-46zJjHLKQ1ZYTH43OxHZdrYo19grSvOiBZwvQX0ZTxL_WLBoPF2K\
+    mWRZgniUINyALj5U4TiQsGezxlyHxfY2MheeV_70Cgq-zDiSRiw71gPPjloJQybFBDcwa8jwq7n\
+    ATm-3omC3WrG4SWZoPsGljxsr3_ELrrqEuuKIoJCDVR-Y1Z-I-d3SNcpE2fEz6JO63vng\"\r
+
+    }"
+order: 2000

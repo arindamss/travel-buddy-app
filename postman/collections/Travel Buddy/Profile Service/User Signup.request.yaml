@@ -1,0 +1,42 @@
+$kind: http-request
+url: localhost:8082/user/signup
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Arindam Roy\",\r
+
+    \  \"dateOfBirth\": \"1998-09-15T00:00:00\",\r
+
+    \  \"gender\": \"MALE\",\r
+
+    \  \"phone\": 9876543210,\r
+
+    \  \"username\": \"arindam.dev\",\r
+
+    \  \"password\": \"Arindam2*\",\r
+
+    \  \"bio\": \"Backend developer passionate about building scalable
+    systems.\",\r
+
+    \  \"profileUrl\": \"https://example.com/profiles/arindam.jpg\",\r
+
+    \  \"location\": \"Kolkata, India\",\r
+
+    \  \"interests\": [\r
+
+    \    \"backend\",\r
+
+    \    \"microservices\",\r
+
+    \    \"system design\"\r
+
+    \  ],\r
+
+    \  \"tag\": \"Introvert\",\r
+
+    \  \"style\": \"Budget\"\r
+
+    }"
+order: 1000
