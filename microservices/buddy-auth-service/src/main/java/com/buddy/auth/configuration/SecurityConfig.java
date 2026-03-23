@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 //	private final RsaKeyProperties rsaKeyProperties;
-    private final JwtAuthenticationFilter jwtAuthFilter;
+//    private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsServiceAdapter userDetailsServiceAdapter;
     
 
@@ -61,38 +61,60 @@ public class SecurityConfig {
     /**
      * Core Spring Security configuration.
      */
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//            // Disable CSRF (because we’re using JWT)
+//            .csrf(csrf -> csrf.disable())
+//
+//            // Allow unauthenticated access to specific endpoints
+//            .authorizeHttpRequests(auth -> auth
+//                .requestMatchers(
+//                	"/internal/**",
+//                    "/auth/register",
+//                    "/auth/login",
+//                    "/auth/refresh-token",
+//                    "/auth/password/**",
+//                    "/v3/api-docs/**",
+//                    "/swagger-ui/**",
+//                    "/swagger-ui.html",
+//                    "/error"
+//                ).permitAll()
+//                .anyRequest().authenticated()
+//            )
+//
+//            // Stateless session management (JWT only)
+//            .sessionManagement(session -> session
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//            )
+//
+//            // Set our AuthenticationProvider
+//            .authenticationProvider(authenticationProvider())
+//
+//            // Add JWT validation filter
+//            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Disable CSRF (because we’re using JWT)
             .csrf(csrf -> csrf.disable())
 
-            // Allow unauthenticated access to specific endpoints
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                	"/internal/**",
-                    "/auth/register",
-                    "/auth/login",
-                    "/auth/refresh-token",
-                    "/auth/password/**",
-                    "/v3/api-docs/**",
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/error"
+                    "/auth/**",
+                    "/.well-known/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
 
-            // Stateless session management (JWT only)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
-            // Set our AuthenticationProvider
-            .authenticationProvider(authenticationProvider())
-
-            // Add JWT validation filter
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .authenticationProvider(authenticationProvider());
 
         return http.build();
     }

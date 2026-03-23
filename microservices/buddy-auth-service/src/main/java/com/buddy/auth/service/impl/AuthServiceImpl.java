@@ -1,6 +1,6 @@
 package com.buddy.auth.service.impl;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -23,14 +22,11 @@ import com.buddy.auth.configuration.UserDetailsImpl;
 import com.buddy.auth.entity.User;
 import com.buddy.auth.entity.UserCredential;
 import com.buddy.auth.enums.CredentialType;
-import com.buddy.auth.exception.InvalidCredentialsException;
-import com.buddy.auth.exception.UserNotFoundException;
 import com.buddy.auth.repository.UserCredentialRepository;
 import com.buddy.auth.repository.UserRepository;
 import com.buddy.auth.service.AuthService;
 import com.buddy.auth.service.JwtService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -76,81 +72,65 @@ public class AuthServiceImpl implements AuthService{
 		return new ResponseEntity(responseDto, HttpStatus.CREATED);
 	}
 
-	@Override
-	public AuthResponse loginUser(@Valid LoginRequest request) {
-		try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-            );
+	 @Override
+    public AuthResponse loginUser(LoginRequest request) {
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
 
-            // Generate both tokens
-            String accessToken = jwtService.generateAccessToken(authentication);
-            String refreshToken = jwtService.generateRefreshToken(authentication);
+        String accessToken = jwtService.generateAccessToken(authentication);
+        String refreshToken = jwtService.generateRefreshToken(authentication);
 
-            
-            // Get user info
-            Optional<User> users = userRepository.findByUsername(request.getUsername());
+        User user = userRepository.findByUsername(request.getUsername())
+                .stream()
+                .findFirst()
+                .orElseThrow();
 
-            if (users.isEmpty()) {
-                throw new UserNotFoundException("User not found: " + request.getUsername());
-            }
+        return AuthResponse.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .expiresIn(300)
+                .build();
+    }
 
-            User user = users.get();
+    @Override
+    public AuthResponse refreshToken(String refreshToken) {
 
-            return AuthResponse.builder()
-                    .userId(user.getUserId())
-                    .username(user.getUsername())
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .tokenType("Bearer")
-                    .expiresIn(jwtService.getAccessTokenExpirySeconds())
-                    .build();
+        Jwt jwt = jwtService.decode(refreshToken);
 
-        } catch (Exception e) {
-            throw new InvalidCredentialsException("Invalid user login or password.");
+        if (!"refresh".equals(jwt.getClaimAsString("typ"))) {
+            throw new RuntimeException("Invalid refresh token");
         }
-	}
 
-	@Override
-	public AuthResponse refreshToken(String refreshToken) {
-		Jwt jwt = jwtService.decode(refreshToken);
-		
-		if(!"refresh".equals(jwt.getClaimAsString("typ"))) {
-			throw new InvalidCredentialsException("Invalid refresh token.");
-		}
-		
-		UUID userId = UUID.fromString(jwt.getSubject());
-		
-//		System.out.println("Username: "+username);
-		
-		User user = userRepository.findById(userId)
-				.stream()
-				.findFirst()
-				.orElseThrow(() -> new UserNotFoundException("User not found."));
-		
-		UserDetailsImpl userDetails = new UserDetailsImpl(user);
+        UUID userId = UUID.fromString(jwt.getSubject());
 
-		Authentication authentication =
-		        new UsernamePasswordAuthenticationToken(
-		                userDetails,
-		                null,
-		                userDetails.getAuthorities()
-		        );
+        User user = userRepository.findById(userId).orElseThrow();
 
-		
-		String newAccessToken = jwtService.generateAccessToken(authentication);
-		
-		
-		return AuthResponse.builder()
-					.userId(user.getUserId())
-					.username(user.getUsername())
-					.accessToken(newAccessToken)
-					.refreshToken(refreshToken)
-					.tokenType("Bearer")
-		            .expiresIn(jwtService.getAccessTokenExpirySeconds())
-				.build();
-	}
+        UserDetailsImpl userDetails = new UserDetailsImpl(user);
+
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                List.of()
+        );
+
+        String newAccessToken = jwtService.generateAccessToken(auth);
+
+        return AuthResponse.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .expiresIn(300)
+                .build();
+    }
 
 }

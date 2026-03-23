@@ -43,15 +43,6 @@ public class RsaKeyProperties {
         this.resourceLoader = resourceLoader;
     }
     
-    @PostConstruct
-    public void init() {
-    	System.out.println("KeyStore: "+keyStore);
-        System.out.println("KeyPassword: "+keyStorePassword);
-        System.out.println("KeyAlias: "+keyAlias);
-        System.out.println("kyPassword: "+keyPassword);
-        System.out.println("KeyStoreType: "+keyStoreType);
-    }
-
     /**
      * Initializes the public and private keys by loading them from the configured KeyStore.
      * This method runs after the properties have been set by Spring.
@@ -59,32 +50,17 @@ public class RsaKeyProperties {
      */
     @PostConstruct
     public void loadKeysFromKeystore() throws Exception {
-        if (keyStore == null || keyStorePassword == null || keyAlias == null || keyPassword == null) {
-            throw new IllegalArgumentException("KeyStore properties are not fully configured. Cannot load RSA keys.");
-        }
-
-        // 1. Get the KeyStore resource
         Resource resource = resourceLoader.getResource(keyStore);
-        if (!resource.exists()) {
-            throw new IllegalArgumentException("KeyStore file not found: " + keyStore);
-        }
 
         try (InputStream inputStream = resource.getInputStream()) {
-            // 2. Load the KeyStore using the specified type
-            KeyStore ks = KeyStore.getInstance(keyStoreType); // Use keyStoreType
+            KeyStore ks = KeyStore.getInstance(keyStoreType);
             ks.load(inputStream, keyStorePassword);
 
-            // 3. Retrieve the private key from the KeyStore using its alias and password
             Key key = ks.getKey(keyAlias, keyPassword);
-            if (key instanceof PrivateKey) {
-                this.privateKey = (RSAPrivateKey) key;
-                // 4. Retrieve the public key (certificate) associated with the alias
-                Certificate cert = ks.getCertificate(keyAlias);
-                PublicKey publicKey = cert.getPublicKey();
-                this.publicKey = (RSAPublicKey) publicKey;
-            } else {
-                throw new IllegalStateException("Key for alias '" + keyAlias + "' is not a private key.");
-            }
+            this.privateKey = (RSAPrivateKey) key;
+
+            Certificate cert = ks.getCertificate(keyAlias);
+            this.publicKey = (RSAPublicKey) cert.getPublicKey();
         }
     }
 
