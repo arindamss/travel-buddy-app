@@ -28,6 +28,8 @@ import java.util.UUID;
 public class RsaKeyProperties {
 
     private final ResourceLoader resourceLoader;
+    
+    private final String keyId = UUID.randomUUID().toString();
 
     private String keyStore;
     private char[] keyStorePassword;
@@ -122,7 +124,7 @@ public class RsaKeyProperties {
     public RSAKey toRSAKey() {
         return new RSAKey.Builder(getPublicKey())
                 .privateKey(getPrivateKey())
-                .keyID(UUID.randomUUID().toString())
+                .keyID(keyId)
                 .build();
     }
 }

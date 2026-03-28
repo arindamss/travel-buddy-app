@@ -2,13 +2,19 @@ spring:
   application:
     name: buddy-administrator-service
   datasource:
-    url: jdbc:mysql://localhost:3306/buddy_administrator_service
+    url: jdbc:mysql://localhost:3306/buddy_profile_service
     username: root
     password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
       mode: always
+  security:
+      oauth2:
+        resourceserver:
+          jwt:
+            # This URL points to the Auth Service endpoint we just created
+            jwk-set-uri: http://localhost:8083/.well-known/jwks.json
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
@@ -37,3 +43,9 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE

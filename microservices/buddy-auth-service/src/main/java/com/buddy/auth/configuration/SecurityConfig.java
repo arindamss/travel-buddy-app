@@ -75,6 +75,7 @@ public class SecurityConfig {
                     "/auth/login",
                     "/auth/refresh-token",
                     "/auth/password/**",
+                    "/.well-known/jwks.json",
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
