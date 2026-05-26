@@ -46,5 +46,6 @@
     <module>microservices/buddy-profile-service</module>
     <module>microservices/buddy-auth-service</module>
     <module>microservices/buddy-post-service</module>
+    <module>microservices/buddy-post-service/buddy-post-client</module>
   </modules>
 </project>
