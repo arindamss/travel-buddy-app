@@ -22,7 +22,6 @@ import lombok.Data;
 @Data
 @Builder
 @Entity
-@Table(name = "buddy_post")
 public class Post {
 	
 	@Id
