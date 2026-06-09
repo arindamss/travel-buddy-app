@@ -6,6 +6,11 @@
     <file url="file://$PROJECT_DIR$/microservices/administrator-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/microservices/buddy-auth-service/buddy-auth-client/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/microservices/buddy-auth-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservices/buddy-discovery-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservices/buddy-post-service/buddy-post-client/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservices/buddy-post-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservices/buddy-profile-service/buddy-profile-client/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/microservices/buddy-profile-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/microservices/discovery-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />

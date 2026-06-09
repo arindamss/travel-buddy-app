@@ -2,4 +2,4 @@ spring:
   application:
     name: buddy-post-service
   profiles:
-    active: home
+    active: office

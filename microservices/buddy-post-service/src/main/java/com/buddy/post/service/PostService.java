@@ -20,5 +20,5 @@ public class PostService {
 		return null;
 	}
 	
-	public 
+//	public
 }

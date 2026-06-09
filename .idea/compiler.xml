@@ -2,16 +2,21 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="buddy-auth-client" />
-        <module name="buddy-auth-service" />
-        <module name="buddy-client" />
+        <module name="buddy-profile-service" />
+        <module name="buddy-profile-client" />
         <module name="administrator-service" />
         <module name="administrator-service-client" />
         <module name="buddy-discovery-service" />
+        <module name="buddy-post-client" />
+        <module name="buddy-auth-client" />
+        <module name="buddy-auth-service" />
+        <module name="buddy-post-service" />
+        <module name="buddy-client" />
       </profile>
     </annotationProcessing>
   </component>
@@ -23,6 +28,10 @@
       <module name="buddy-auth-service" options="-parameters" />
       <module name="buddy-client" options="-parameters" />
       <module name="buddy-discovery-service" options="-parameters" />
+      <module name="buddy-post-client" options="-parameters" />
+      <module name="buddy-post-service" options="-parameters" />
+      <module name="buddy-profile-client" options="-parameters" />
+      <module name="buddy-profile-service" options="-parameters" />
     </option>
   </component>
 </project>
